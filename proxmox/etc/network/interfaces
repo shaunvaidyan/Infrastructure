@@ -1,0 +1,25 @@
+## LACP for bonding ethernet ports with Unifi switch
+
+auto lo
+iface lo inet loopback
+iface enp2s0f0 inet manual
+iface eno1 inet manual
+iface eno2 inet manual
+iface enp2s0f1 inet manual
+
+auto bond0
+iface bond0 inet manual
+slaves enp2s0f0 enp2s0f1
+bond_miimon 100
+bond_mode 802.3ad
+bond-xmit-hash-policy layer2+3
+post-up ifconfig enp2s0f0 mtu 9000 && ifconfig enp2s0f1 mtu 9000 && ifconfig bond0 mtu 9000
+
+auto vmbr0
+iface vmbr0 inet static
+address  10.10.10.10
+netmask  255.255.255.0
+gateway  10.10.10.1
+bridge_ports bond0
+bridge_stp off
+bridge_fd 0
